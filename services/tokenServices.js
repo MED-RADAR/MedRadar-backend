@@ -12,7 +12,11 @@ class tokenServices {
   }
 
   async verifyAccessToken(token) {
-    return jwt.verify(token, JWT_SECRET);
+    try{
+      return jwt.verify(token, JWT_SECRET);
+    }catch(error){  
+      return false;
+    }
   }
 
   async verifyRefreshToken(token) {

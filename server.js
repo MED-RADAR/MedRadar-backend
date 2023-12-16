@@ -4,6 +4,7 @@ const app = express();
 const cors = require("cors");
 const PORT = APP_PORT || 5500;
 const connectDB = require("./config/database");
+const errorHandler = require("./middlewares/errorHandler");
 connectDB();
 const cookieParser = require("cookie-parser");
 app.use(express.json());
@@ -32,6 +33,7 @@ const userRouter = require("./routes/userRoutes");
 app.use("/hospital", hospitalRouter);
 app.use("/user", userRouter);
 
+app.use(errorHandler)
 app.listen(PORT, () => {
   console.log(`Listning on port : ${PORT}`);
 });
