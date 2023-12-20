@@ -26,5 +26,29 @@ const specialtiesControllers = {
       next(error);
     }
   },
+
+  async removeSpecialties(req, res, next) {
+    try {
+      const { specialty } = req.body;
+      const hospitalId = req.hospital._id;
+      const hospital = await getHospitalServices.getById(hospitalId);
+      if (!hospital) {
+        next(CustomErrorHandler.notFound("Hospital not Found"));
+      }
+
+      const existingSpecialties = hospital.specialties;
+      const filteredSpecialties = existingSpecialties.filter(
+        (fac) => fac !== facility
+      );
+      hospital.specialties = filteredSpecialties;
+      await hospital.save();
+
+      res
+        .status(200)
+        .json(`${specialty} has been removed from your specialties list`);
+    } catch (error) {
+      next(error);
+    }
+  },
 };
 module.exports = specialtiesControllers;

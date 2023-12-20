@@ -26,5 +26,24 @@ const facilitiesControllers = {
       next(error);
     }
   },
+  async removeFacilities(req,res,next){
+    try {
+      const { facility } = req.body;
+      const hospitalId = req.hospital._id;
+      const hospital = await getHospitalServices.getById(hospitalId);
+      if (!hospital) {
+        next(CustomErrorHandler.notFound("Hospital not Found"));
+      }
+
+      const existingFacilities = hospital.facilities;
+      const filteredFacilities = existingFacilities.filter((fac)=>fac!==facility);
+      hospital.facilities = filteredFacilities;
+      await hospital.save();
+
+      res.status(200).json(`${facility} has been removed from your facilities list`);
+    } catch (error) {
+      next(error);
+    }
+  }
 };
 module.exports = facilitiesControllers;

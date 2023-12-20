@@ -29,6 +29,11 @@ router.post(
   authHospitalMiddleware,
   specialtiesControllers.addSpecialties
 );
+router.put(
+  "/specialties",
+  authHospitalMiddleware,
+  specialtiesControllers.removeSpecialties
+);
 
 // [+] Facilities
 router.post(
@@ -36,5 +41,11 @@ router.post(
   authHospitalMiddleware,
   facilitiesControllers.addFacilities
 );
+router.put(
+  "/facilities",
+  authHospitalMiddleware,
+  facilitiesControllers.removeFacilities
+);
+
 
 module.exports = router;
