@@ -5,5 +5,4 @@ const connectDB = async() =>{
     const {connection} = await mongoose.connect(DB_URL);
     console.log(`MongoDB connected with ${connection.host}`);
 } 
-
 module.exports =  connectDB;

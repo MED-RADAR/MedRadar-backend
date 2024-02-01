@@ -29,7 +29,6 @@ app.use(
 const hospitalRouter = require("./routes/hospitalRoutes");
 const userRouter = require("./routes/userRoutes");
 
-
 app.use("/hospital", hospitalRouter);
 app.use("/user", userRouter);
 

@@ -20,6 +20,14 @@ const doctorSchema = new Schema(
             type: String
         }
     },
+    startTime:{
+      type: String,
+      require:true
+    },
+    endTime:{
+      type: String,
+      require:true
+    },
     yearsOfExperience:{
         type: Number,
         required: true,
