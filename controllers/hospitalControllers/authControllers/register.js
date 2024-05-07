@@ -1,3 +1,7 @@
+const HospitalDto = require("../../../dtos/hospitalDto");
+const Hospital = require("../../../models/Hospital");
+const Image = require("../../../models/Image");
+const getDataUri = require("../../../services/getDataUri");
 const hashServices = require("../../../services/hashServices");
 const {
   createHospital,
@@ -6,24 +10,16 @@ const getHospitalServices = require("../../../services/hospitalServices/getHospi
 const refreshHospitalServices = require("../../../services/hospitalServices/refreshHospitalServices");
 const tokenServices = require("../../../services/tokenServices");
 const CustomErrorHandler = require("../../../utils/CustomErrorHandler");
-
+const cloudinary = require("cloudinary");
 const registerController = {
   async register(req, res, next) {
-    const {
-      name,
-      contactEmail,
-      ContactNumber,
-      state,
-      city,
-      location,
-      email,
-      password,
-    } = req.body;
+    const { name, phone, pincode, state, city, location, email, password } =
+      req.body;
 
     if (
       !name ||
-      !contactEmail ||
-      !ContactNumber ||
+      !pincode ||
+      !phone ||
       !state ||
       !city ||
       !location ||
@@ -35,7 +31,6 @@ const registerController = {
 
     try {
       const existHospital = await getHospitalServices.getByEmail(email);
-      console.log(existHospital);
 
       if (existHospital) {
         return next(
@@ -67,9 +62,65 @@ const registerController = {
         secure: true,
       });
 
-      res.status(200).json(hospital);
+      const hospitalDto = new HospitalDto(hospital);
+
+      res.status(200).json({
+        error: false,
+        message: "successfully Loggedin",
+        success: true,
+        data: {
+          isAuth: true,
+          hospital: hospitalDto,
+          approved: hospital.approved,
+        },
+      });
     } catch (error) {
-      return next(err);
+      console.log(error);
+      return next(error);
+    }
+  },
+  async updateProfilePic(req, res, next) {
+    const hospitalId = req.__auth.id;
+    const file = req.file;
+    if (!file || !hospitalId) return next(CustomErrorHandler.missingFields());
+
+    try {
+      const hospital = await Hospital.findById(hospitalId);
+      if (!hospital) {
+        return next(
+          CustomErrorHandler.notFound("Hospital not found in our Database")
+        );
+      }
+
+      const fileUri = getDataUri(file);
+
+      if (!hospital.profilePic) {
+        const cloudinaryUpload = await cloudinary.v2.uploader.upload(
+          fileUri.content
+        );
+        const image = await Image.create({
+          public_id: cloudinaryUpload.public_id,
+          url: cloudinaryUpload.secure_url,
+        });
+        hospital.profilePic = image._id;
+        await hospital.save();
+      } else {
+        const image = await Image.findById(hospital.profilePic);
+        if (!image) {
+          return next(CustomErrorHandler.notFound("Image not found"));
+        }
+        await cloudinary.v2.uploader.destroy(image.public_id);
+        const cloudinaryUpload = await cloudinary.v2.uploader.upload(
+          fileUri.content
+        );
+        image.public_id = cloudinaryUpload.public_id;
+        image.url = cloudinaryUpload.secure_url;
+        await image.save();
+      }
+
+      return res.status(200).json("Profile Image updated");
+    } catch (error) {
+      next(error);
     }
   },
 };

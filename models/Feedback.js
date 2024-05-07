@@ -5,6 +5,12 @@ const feedbackSchema = new Schema(
     user: {
       type: Schema.Types.ObjectId,
       required: true,
+      ref: 'User'
+    },
+    hospital:{
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "Hospital",
     },
     feedback: {
       type: String,

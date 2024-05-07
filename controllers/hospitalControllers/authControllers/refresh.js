@@ -1,3 +1,5 @@
+const HospitalDto = require("../../../dtos/hospitalDto");
+const Hospital = require("../../../models/Hospital");
 const getHospitalServices = require("../../../services/hospitalServices/getHospitalServices");
 const refreshHospitalServices = require("../../../services/hospitalServices/refreshHospitalServices");
 const tokenServices = require("../../../services/tokenServices");
@@ -10,6 +12,7 @@ const refreshController = {
       if (!refreshTokenFromCookie) {
         next(CustomErrorHandler.unAuthorized());
       }
+
       let hospitalData = await tokenServices.verifyRefreshToken(
         refreshTokenFromCookie
       );
@@ -21,7 +24,9 @@ const refreshController = {
         return next(CustomErrorHandler.invalidToken());
       }
 
-      const hospital = await getHospitalServices.getById(hospitalData._id);
+      const hospital = await Hospital.findById(hospitalData._id).populate(
+        "profilePic"
+      );
       if (!hospital) {
         return next(
           CustomErrorHandler.notFound("No hospital exist with this id")
@@ -49,7 +54,39 @@ const refreshController = {
         secure: true,
       });
 
-      res.status(200).json(hospital);
+      const hospitalDto = new HospitalDto(hospital);
+
+      res.status(200).json({
+        error: false,
+        message: "successfully Loggedin",
+        success: true,
+        data: {
+          isAuth: true,
+          hospital: hospitalDto,
+          approved: hospital.approved,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  async getHospital(req, res, next) {
+    const hospitalId = req.__auth.id;
+    try {
+      const hospital = await Hospital.findById(hospitalId).populate(
+        "profilePic"
+      );
+      if (!hospital) {
+        return next(
+          CustomErrorHandler.notFound("No hospital exist with this id")
+        );
+      }
+      const hospitalDto = new HospitalDto(hospital);
+
+      res.status(200).json({
+        success: true,
+        hospital: hospitalDto,
+      });
     } catch (error) {
       next(error);
     }

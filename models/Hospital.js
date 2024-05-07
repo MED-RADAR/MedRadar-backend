@@ -28,6 +28,10 @@ const hospitalSchema = new Schema(
         type: String,
         required: true,
       },
+      pincode: {
+        type: String,
+        required: true,
+      },
       location: {
         type: String,
         required: true,
@@ -35,7 +39,7 @@ const hospitalSchema = new Schema(
     },
     contact: {
       phone: {
-        type: Number,
+        type: String,
         required: true,
       },
       email: {
@@ -54,28 +58,31 @@ const hospitalSchema = new Schema(
       },
     },
 
-    facilities: {
-      type: Array,
-      items: {
-        type: String,
-      },
+    profilePic: {
+      type: Schema.Types.ObjectId,
+      ref: "Image",
     },
 
-    treatments: {
-      type: Array,
-      items: {
+    facilities: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Facility",
+      },
+    ],
+
+    treatments: [
+      {
         type: Schema.Types.ObjectId,
         ref: "Treatment",
       },
-    },
+    ],
 
-    doctors: {
-      type: Array,
-      items: {
+    doctors: [
+      {
         type: Schema.Types.ObjectId,
         ref: "Doctor",
       },
-    },
+    ],
 
     feedbacks: {
       type: Array,
@@ -85,25 +92,25 @@ const hospitalSchema = new Schema(
       },
     },
 
-    ratings: {
-      averageRating: {
-        type: Number,
-        min: 0,
-        max: 5,
-        default: 0,
-      },
-      totalRatings: {
-        type: Number,
-        default: 0,
-      },
-      allRatings: {
-        type: Array,
-        items: {
-          type: Schema.Types.ObjectId,
-          ref: "Rating",
-        },
-      },
-    },
+    // ratings: {
+    //   averageRating: {
+    //     type: Number,
+    //     min: 0,
+    //     max: 5,
+    //     default: 0,
+    //   },
+    //   totalRatings: {
+    //     type: Number,
+    //     default: 0,
+    //   },
+    //   allRatings: {
+    //     type: Array,
+    //     items: {
+    //       type: Schema.Types.ObjectId,
+    //       ref: "Rating",
+    //     },
+    //   },
+    // },
   },
   {
     timestamps: true,

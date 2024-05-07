@@ -5,7 +5,7 @@ const specialtiesControllers = {
   async addSpecialties(req, res, next) {
     try {
       const { specialties } = req.body;
-      const hospitalId = req.hospital._id;
+      const hospitalId = req.__auth.id;
       const hospital = await getHospitalServices.getById(hospitalId);
       if (!hospital) {
         next(CustomErrorHandler.notFound("Hospital not Found"));
@@ -30,7 +30,7 @@ const specialtiesControllers = {
   async removeSpecialties(req, res, next) {
     try {
       const { specialty } = req.body;
-      const hospitalId = req.hospital._id;
+      const hospitalId = req.__auth.id;
       const hospital = await getHospitalServices.getById(hospitalId);
       if (!hospital) {
         next(CustomErrorHandler.notFound("Hospital not Found"));

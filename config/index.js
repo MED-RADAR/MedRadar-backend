@@ -13,5 +13,7 @@ module.exports =  {
   SMTP_PORT,
   SMTP_USER,
   SMTP_PASS,
-  HASH_SECRET
+  HASH_SECRET,
+  CLIENT_ID,
+  CLIENT_SECRET
 } = process.env;

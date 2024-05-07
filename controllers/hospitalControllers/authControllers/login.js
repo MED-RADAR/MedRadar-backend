@@ -1,3 +1,4 @@
+const HospitalDto = require("../../../dtos/hospitalDto");
 const hashServices = require("../../../services/hashServices");
 const getHospitalServices = require("../../../services/hospitalServices/getHospitalServices");
 const refreshHospitalServices = require("../../../services/hospitalServices/refreshHospitalServices");
@@ -43,9 +44,20 @@ const loginController = {
         secure: true,
       });
 
-      res.status(200).json(hospital);
+      const hospitalDto = new HospitalDto(hospital)
+
+      res.status(200).json({
+        error: false,
+        message: "successfully Loggedin",
+        success: true,
+        data: {
+          isAuth: true,
+          hospital: hospitalDto,
+          approved: hospital.approved,
+        },
+      });
     } catch (error) {
-      return next(err);
+      return next(error);
     }
   },
 };
