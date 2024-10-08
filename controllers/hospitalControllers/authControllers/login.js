@@ -1,4 +1,4 @@
-const HospitalDto = require("../../../dtos/hospitalDto");
+const HospitalDto = require("../../../dtos/HospitalDto");
 const hashServices = require("../../../services/hashServices");
 const getHospitalServices = require("../../../services/hospitalServices/getHospitalServices");
 const refreshHospitalServices = require("../../../services/hospitalServices/refreshHospitalServices");
